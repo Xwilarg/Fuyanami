@@ -1,0 +1,3 @@
+[submodule "Fuyanami/Discord-Utils"]
+	path = Fuyanami/Discord-Utils
+	url = https://github.com/Xwilarg/Discord-Utils
