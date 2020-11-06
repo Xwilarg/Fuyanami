@@ -1,0 +1,11 @@
+[Unit]
+Description=Fuyanami
+After=network-online.target
+
+[Service]
+ExecStart=dotnet /home/zirk/bots/Fuyanami/Fuyanami.dll
+WorkingDirectory=/home/zirk/bots/Fuyanami
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
