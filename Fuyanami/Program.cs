@@ -40,6 +40,7 @@ namespace Fuyanami
             P = this;
 
             await _commands.AddModuleAsync<Communication>(null);
+            await _commands.AddModuleAsync<Info>(null);
 
             Client.MessageReceived += HandleCommandAsync;
 
