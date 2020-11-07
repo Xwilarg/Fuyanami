@@ -1,5 +1,6 @@
 ﻿using Discord.Commands;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Fuyanami.Module
@@ -9,57 +10,72 @@ namespace Fuyanami.Module
         [Command("RAM")]
         public async Task RAM()
         {
-            var p = new Process
+            if (!Program.AllowedIds.Contains(Context.User.Id.ToString()))
+                await ReplyAsync("You are not allowed to do this command.");
+            else
             {
-                StartInfo = new ProcessStartInfo
+                var p = new Process
                 {
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    FileName = "free",
-                    Arguments = "-h"
-                }
-            };
-            p.Start();
-            string output = p.StandardOutput.ReadToEnd();
-            p.WaitForExit();
-            await ReplyAsync($"```\n`{output}\n```");
+                    StartInfo = new ProcessStartInfo
+                    {
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        FileName = "free",
+                        Arguments = "-h"
+                    }
+                };
+                p.Start();
+                string output = p.StandardOutput.ReadToEnd();
+                p.WaitForExit();
+                await ReplyAsync($"```\n`{output}\n```");
+            }
         }
 
         [Command("CPU")]
         public async Task CPU()
         {
-            var p = new Process
+            if (!Program.AllowedIds.Contains(Context.User.Id.ToString()))
+                await ReplyAsync("You are not allowed to do this command.");
+            else
             {
-                StartInfo = new ProcessStartInfo
+                var p = new Process
                 {
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    FileName = "top",
-                    Arguments = "-b -n 1 -i"
-                }
-            };
-            p.Start();
-            string output = p.StandardOutput.ReadToEnd();
-            p.WaitForExit();
-            await ReplyAsync($"```\n`{output}\n```");
+                    StartInfo = new ProcessStartInfo
+                    {
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        FileName = "top",
+                        Arguments = "-b -n 1 -i"
+                    }
+                };
+                p.Start();
+                string output = p.StandardOutput.ReadToEnd();
+                p.WaitForExit();
+                await ReplyAsync($"```\n`{output}\n```");
+            }
         }
 
         [Command("Memory")]
         public async Task Memory()
         {
-            var p = new Process
+            if (!Program.AllowedIds.Contains(Context.User.Id.ToString()))
+                await ReplyAsync("You are not allowed to do this command.");
+            else
             {
-                StartInfo = new ProcessStartInfo
+                var p = new Process
                 {
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    FileName = "df"
-                }
-            };
-            p.Start();
-            string output = p.StandardOutput.ReadToEnd();
-            p.WaitForExit();
-            await ReplyAsync($"```\n`{output}\n```");
+                    StartInfo = new ProcessStartInfo
+                    {
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        FileName = "df"
+                    }
+                };
+                p.Start();
+                string output = p.StandardOutput.ReadToEnd();
+                p.WaitForExit();
+                await ReplyAsync($"```\n`{output}\n```");
+            }
         }
     }
 }
