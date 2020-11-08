@@ -13,7 +13,7 @@ namespace Fuyanami.Module
             name = char.ToUpper(name[0]) + string.Join("", name.Skip(1)).ToLower();
             if (!Program.AllowedIds.Contains(Context.User.Id.ToString()))
                 await ReplyAsync("You are not allowed to do this command.");
-            else if (name != "Sanara" && name != "Fuyanami" && name != "Pina")
+            else if (name != "Sanara" && name != "Fuyanami" && name != "Pina" && name != "Yuuka")
                 await ReplyAsync("Invalid program name");
             else
             {
@@ -42,7 +42,7 @@ namespace Fuyanami.Module
             name = char.ToUpper(name[0]) + string.Join("", name.Skip(1)).ToLower();
             if (!Program.AllowedIds.Contains(Context.User.Id.ToString()))
                 await ReplyAsync("You are not allowed to do this command.");
-            else if (name != "Sanara" && name != "Fuyanami" && name != "Pina")
+            else if (name != "Sanara" && name != "Fuyanami" && name != "Pina" && name != "Yuuka")
                 await ReplyAsync("Invalid program name");
             else
             {
