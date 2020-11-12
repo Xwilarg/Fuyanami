@@ -22,6 +22,7 @@ namespace Fuyanami
         public static Program P;
         public static string SudoPassword;
         public static string[] AllowedIds;
+        public static string[] AllowedPrograms;
 
         public DateTime StartTime { private set; get; }
 
@@ -38,7 +39,7 @@ namespace Fuyanami
         private async Task MainAsync()
         {
             var json = JsonConvert.DeserializeObject<JObject>(File.ReadAllText("Keys/Credentials.json"));
-            if (json["botToken"] == null || json["sudoPassword"] == null || json["allowedIds"] == null)
+            if (json["botToken"] == null || json["sudoPassword"] == null || json["allowedIds"] == null || json["allowedPrograms"] == null)
                 throw new NullReferenceException("Invalid Credentials file");
 
             P = this;
@@ -51,6 +52,7 @@ namespace Fuyanami
 
             SudoPassword = json["sudoPassword"].Value<string>();
             AllowedIds = json["allowedIds"].Value<JArray>().Select(x => (string)x).ToArray();
+            AllowedPrograms = json["allowedPrograms"].Value<JArray>().Select(x => (string)x).ToArray();
 
             StartTime = DateTime.Now;
             await Client.LoginAsync(TokenType.Bot, json["botToken"].Value<string>());

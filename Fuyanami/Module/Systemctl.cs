@@ -7,13 +7,40 @@ namespace Fuyanami.Module
 {
     public class Systemctl : ModuleBase
     {
+        [Command("Restart")]
+        public async Task Restart(string name)
+        {
+            var program = Program.AllowedPrograms.FirstOrDefault(x => x.ToLower() == name.ToLower());
+            if (!Program.AllowedIds.Contains(Context.User.Id.ToString()))
+                await ReplyAsync("You are not allowed to do this command.");
+            else if (program == null)
+                await ReplyAsync("Invalid program name");
+            else
+            {
+                var p = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "sudo",
+                        Arguments = "systemctl restart " + program,
+                        UseShellExecute = false,
+                        RedirectStandardInput = true
+                    }
+                };
+                p.Start();
+                p.StandardInput.WriteLine(Program.SudoPassword);
+                p.WaitForExit();
+                await ReplyAsync($"Done");
+            }
+        }
+
         [Command("Status")]
         public async Task Status(string name)
         {
-            name = char.ToUpper(name[0]) + string.Join("", name.Skip(1)).ToLower();
+            var program = Program.AllowedPrograms.FirstOrDefault(x => x.ToLower() == name.ToLower());
             if (!Program.AllowedIds.Contains(Context.User.Id.ToString()))
                 await ReplyAsync("You are not allowed to do this command.");
-            else if (name != "Sanara" && name != "Fuyanami" && name != "Pina" && name != "Yuuka")
+            else if (program == null)
                 await ReplyAsync("Invalid program name");
             else
             {
@@ -25,7 +52,7 @@ namespace Fuyanami.Module
                         RedirectStandardOutput = true,
                         RedirectStandardInput = true,
                         FileName = "sudo",
-                        Arguments = "journalctl -n 10 -u " + name
+                        Arguments = "systemctl status " + program
                     }
                 };
                 p.Start();
@@ -33,30 +60,6 @@ namespace Fuyanami.Module
                 string output = p.StandardOutput.ReadToEnd();
                 p.WaitForExit();
                 await ReplyAsync($"```\n`{output}\n```");
-            }
-        }
-
-        [Command("Restart")]
-        public async Task Restart(string name)
-        {
-            name = char.ToUpper(name[0]) + string.Join("", name.Skip(1)).ToLower();
-            if (!Program.AllowedIds.Contains(Context.User.Id.ToString()))
-                await ReplyAsync("You are not allowed to do this command.");
-            else if (name != "Sanara" && name != "Fuyanami" && name != "Pina" && name != "Yuuka")
-                await ReplyAsync("Invalid program name");
-            else
-            {
-                var p = new Process
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = "sudo",
-                        Arguments = "systemctl restart " + name
-                    }
-                };
-                p.Start();
-                p.WaitForExit();
-                await ReplyAsync($"Done");
             }
         }
     }
