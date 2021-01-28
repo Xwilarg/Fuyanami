@@ -6,8 +6,10 @@ using Fuyanami.Module;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Fuyanami
@@ -24,6 +26,10 @@ namespace Fuyanami
         public static string[] AllowedIds;
         public static string[] AllowedPrograms;
 
+        private string logsFolder, reportsFolder;
+
+        Timer timer;
+
         public DateTime StartTime { private set; get; }
 
         private Program()
@@ -39,8 +45,14 @@ namespace Fuyanami
         private async Task MainAsync()
         {
             var json = JsonConvert.DeserializeObject<JObject>(File.ReadAllText("Keys/Credentials.json"));
-            if (json["botToken"] == null || json["sudoPassword"] == null || json["allowedIds"] == null || json["allowedPrograms"] == null)
+            if (json["botToken"] == null || json["sudoPassword"] == null || json["allowedIds"] == null || json["allowedPrograms"] == null
+                || json["logsFolder"] == null || json["reportsFolder"] == null)
                 throw new NullReferenceException("Invalid Credentials file");
+
+            logsFolder = json["logsFolder"].Value<string>();
+            reportsFolder = json["reportsFolder"].Value<string>();
+
+            timer = new Timer(new TimerCallback(UploadReports), null, 0, 60 * 60 * 1000); // Called every hour
 
             P = this;
 
@@ -70,6 +82,31 @@ namespace Fuyanami
             {
                 SocketCommandContext context = new SocketCommandContext(Client, msg);
                 await _commands.ExecuteAsync(context, pos, null);
+            }
+        }
+
+        private void UploadReports(object _)
+        {
+            foreach (string f in Directory.GetFiles(logsFolder))
+            {
+                if (f.EndsWith(".log"))
+                {
+                    var fi = new FileInfo(f);
+                    var p = new Process
+                    {
+                        StartInfo = new ProcessStartInfo
+                        {
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            FileName = "goaccess",
+                            Arguments = f + " -a --log-format CADDY"
+                        }
+                    };
+                    p.Start();
+                    string output = p.StandardOutput.ReadToEnd();
+                    p.WaitForExit();
+                    File.WriteAllText(reportsFolder + "/" + fi.Name + ".html", output);
+                }
             }
         }
     }
