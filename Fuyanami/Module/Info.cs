@@ -55,7 +55,7 @@ namespace Fuyanami.Module
             }
         }
 
-        [Command("Memory")]
+        [Command("Storage")]
         public async Task Memory()
         {
             if (!Program.AllowedIds.Contains(Context.User.Id.ToString()))
